@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
-    <link data-th-href="@{/css/main.css?{id}(id=${timestamp})}" rel="stylesheet">
-    <title>CI/CD Master Class By Abhishek Veeramalla</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" />
+    <link data-th-href="@{/css/styles.css?{id}(id=${timestamp})}" rel="stylesheet">
+    <title>Adventure Blog by Alex Rivers</title>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">Ultimate CI/CD Pipeline using Java</div></a>
-</nav>
+    <nav class="navbar is-light">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">The Wanderer's Journal</a>
+        </div>
+    </nav>
 
-<main role="main" class="container">
-    <div class="starter-template">
-        <h1 th:text="${title}">Default title.</h1>
-        <p th:text="${msg}">Default text.</p>
-    </div>
-</main>
+    <main role="main" class="section">
+        <div class="container">
+            <h1 class="title" th:text="${title}">Exploring Uncharted Territories</h1>
+            <p class="subtitle" th:text="${msg}">Join me as I venture into the wild unknown.</p>
+        </div>
+    </main>
 
-<script data-th-src="@{/js/main.js}"></script>
+    <script data-th-src="@{/js/scripts.js}"></script>
 </body>
 
 </html>
