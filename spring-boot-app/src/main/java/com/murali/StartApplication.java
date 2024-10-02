@@ -1,4 +1,4 @@
-package com.abhishek;
+package com.murali;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,8 +12,8 @@ public class StartApplication {
 
     @GetMapping("/")
     public String index(final Model model) {
-    model.addAttribute("title", "Exploring the depths of the ocean in a submarine");
-    model.addAttribute("msg", "This adventure is powered by jellyfish energy and navigated by dolphins");
+        model.addAttribute("title", "DevOps: Building Bridges Between Development and Operations");
+        model.addAttribute("msg", "Empowering teams to deliver better software, faster with automation, CI/CD, and agile practices.");
         return "index";
     }
 

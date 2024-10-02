@@ -1,7 +1,27 @@
 body {
   padding-top: 5rem;
+  background-color: #f5f5f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.starter-template {
-  padding: 3rem 1.5rem;
-  text-align: center;
+
+.navbar-item {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.25rem;
+}
+
+h1.title {
+  font-family: 'Arial', sans-serif;
+  color: #3273dc;
+  /* Bulma's primary color */
+}
+
+p.subtitle {
+  font-family: 'Georgia', serif;
+  font-size: 1.2rem;
+  color: #4a4a4a;
+  /* Dark grey */
+}
+
+.footer {
+  padding: 2rem 1.5rem;
 }
