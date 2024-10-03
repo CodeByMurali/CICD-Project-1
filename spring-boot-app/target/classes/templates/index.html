@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <title>DevOps Portal</title>
+</head>
+
+<body>
+
+    <nav class="navbar is-info">
+        <div class="navbar-brand">
+            <a class="navbar-item has-text-white" href="#">DevOps World</a>
+        </div>
+    </nav>
+
+    <main role="main" class="section">
+        <div class="container has-text-centered">
+            <h1 class="title has-text-primary" th:text="${title}">DevOps Revolution</h1>
+            <p class="subtitle has-text-grey-dark" th:text="${msg}">Empowering teams to innovate, collaborate, and
+                automate.</p>
+        </div>
+    </main>
+
+    <footer class="footer has-background-light">
+        <div class="content has-text-centered">
+            <p>
+                <strong>DevOps World</strong> - Building the future of software development and delivery.
+            </p>
+        </div>
+    </footer>
+
+    <script data-th-src="@{/js/scripts.js}"></script>
+</body>
+
+</html>
