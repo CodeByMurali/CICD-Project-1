@@ -13,9 +13,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-
         sh 'echo passed'
-        //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
       }
     }
     stage('Build and Test') {
@@ -51,12 +49,21 @@ pipeline {
         }
       }
     }
-    stage('Update Deployment File') {
-        environment {
-            GIT_REPO_NAME = "CDUsingArgoCD"
-            GIT_USER_NAME = "CodeByMurali"
+  stage('Update Deployment File') {
+    environment {
+        GIT_REPO_NAME = "CDUsingArgoCD"
+        GIT_USER_NAME = "CodeByMurali"
+        GIT_REPO_URL = "https://github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git"
+    }
+    steps {
+        script {
+            // Clone the repository if it doesn't already exist
+            if (!fileExists("CDUsingArgoCD")) {
+                sh "git clone ${GIT_REPO_URL}"
+            }
         }
-        steps {
+        // Change directory to the cloned repository
+        dir("${GIT_REPO_NAME}") {
             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                 sh '''
                     git config user.email "murali16394@gmail.com"
@@ -70,6 +77,7 @@ pipeline {
             }
         }
     }
+}
   }
       post {
         always {
