@@ -8,6 +8,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
+
         sh 'echo passed'
         //git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-Zero-To-Hero.git'
       }
@@ -65,4 +66,19 @@ pipeline {
         }
     }
   }
+      post {
+        always {
+            script {
+                // Clean the workspace after every build
+                echo "Cleaning up the workspace..."
+                cleanWs() // This will delete the entire workspace
+            }
+        }
+        success {
+            echo "Pipeline succeeded!"
+        }
+        failure {
+            echo "Pipeline failed!"
+        }
+    }
 }
