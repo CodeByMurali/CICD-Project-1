@@ -65,15 +65,15 @@ pipeline {
         // Change directory to the cloned repository
         dir("${GIT_REPO_NAME}") {
             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                sh '''
-                    git config user.email "murali16394@gmail.com"
-                    git config user.name "murali.rajendran"
-                    BUILD_NUMBER=${BUILD_NUMBER}
-                    sed -i "s/\(murali16394\/my-spring-boot-app:\)[0-9][0-9]*\b/\1${BUILD_NUMBER}/" spring-boot-app-manifests/deployment.yml
-                    git add spring-boot-app-manifests/deployment.yml
-                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                '''
+            sh '''
+                git config user.email "murali16394@gmail.com"
+                git config user.name "murali.rajendran"
+                BUILD_NUMBER=${BUILD_NUMBER}
+                sed -i "s/murali16394/my-spring-boot-app:[0-9][0-9]*/murali16394/my-spring-boot-app:${BUILD_NUMBER}/" spring-boot-app-manifests/deployment.yml
+                git add spring-boot-app-manifests/deployment.yml
+                git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+            '''
             }
         }
     }
