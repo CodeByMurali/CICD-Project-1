@@ -13,7 +13,7 @@ pipeline {
     }
     
     parameters {
-        string(name: 'SONAR_IP', defaultValue: '3.222.152.104', description: 'Enter the SonarQube server IP address')
+        string(name: 'CICDSERVER_IP', defaultValue: '18.212.186.40', description: 'Enter the SonarQube server IP address')
     }
 
     stages {
@@ -25,51 +25,88 @@ pipeline {
         stage('Build and Test') {
             steps {
                 sh 'ls -ltr'
-                // build the project and create a JAR file
                 sh 'mvn clean package'
             }
         }
-        stage('Restart SonarQube') {
-          steps {
-            script {
-              // Restart SonarQube server
-              echo "Restarting SonarQube server..."
-              sh '''
-                sudo su - sonarqube -c "cd sonarqube-9.9.7.96285/bin/linux-x86-64/ && ./sonar.sh stop"
-                sleep 5
-                sudo su - sonarqube -c "cd sonarqube-9.9.7.96285/bin/linux-x86-64/ && ./sonar.sh start"
-                echo "Waiting for SonarQube to start..."
-                sleep 30 # Adjust the wait time as necessary
-              '''
-            }
-          }
-        }
-        stage('Static Code Analysis') {
-            environment {
-                SONAR_URL = "http://${params.SONAR_IP}:9000" // Use the parameter here
-            }
+         // SonarQube server pre installed
+        stage('SonarQube Initialization and Static Code Analysis') {
             steps {
+                script {
+                    // Restart SonarQube server
+                    echo "Restarting SonarQube server..."
+                    sh '''
+                        sudo su - sonarqube -c "cd sonarqube-9.9.7.96285/bin/linux-x86-64/ && ./sonar.sh stop"
+                        sleep 5
+                        sudo su - sonarqube -c "cd sonarqube-9.9.7.96285/bin/linux-x86-64/ && ./sonar.sh start"
+                        echo "Waiting for SonarQube to start..."
+                        sleep 30 # Adjust the wait time as necessary
+                    '''
+                }
+                
+                environment {
+                    SONAR_URL = "http://${params.CICDSERVER_IP}:9000" // Use the parameter here
+                }
+
                 withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
                     sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
                 }
             }
         }
-        stage('Build and Push Docker Image') {
+        // Build Docker Image
+        stage('Build Docker Image') {
             environment {
                 DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}"
-                // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
-                REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
             steps {
                 script {
                     sh 'docker build -t ${DOCKER_IMAGE} .'
-                    def dockerImage = docker.image("${DOCKER_IMAGE}")
-                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                        dockerImage.push()
+                }
+            }
+        }
+        // Trivy preinstalled - Scan for Docker Image
+        stage('Trivy Scan Docker Image') {
+            steps {
+                sh 'trivy --version'
+                sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}'
+            }
+            post {
+                failure {
+                    echo 'Security vulnerabilities found in the Docker image!'
+                }
+            }
+        }
+        stage('Docker push by retrieving credentials from vault') {
+            steps {
+                withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: "http://${params.CICDSERVER_IP}:8200"], 
+                        vaultSecrets: [[path: 'secret/dockerhub', secretValues: [[vaultKey: 'username', envVar: 'DOCKER_USERNAME'], [vaultKey: 'password', envVar: 'DOCKER_PASSWORD']]]]) {
+                    script {
+                        // Log in to Docker
+                        sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                        echo "Docker hub login successful via vault"
+                        // Define the Docker image and push it
+                        def dockerImage = docker.image("${DOCKER_IMAGE}")
+                        docker.withRegistry('https://index.docker.io/v1/', 'docker-cred') {
+                            dockerImage.push()
+                        }
                     }
                 }
             }
         }
+        // Push Docker Image to Docker Hub using jenkins docker plugin credentials
+        // stage('Push Docker Image') {
+        //     environment {
+        //         DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}"
+        //         REGISTRY_CREDENTIALS = credentials('docker-cred')
+        //     }
+        //     steps {
+        //         script {
+        //             def dockerImage = docker.image("${DOCKER_IMAGE}")
+        //             docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+        //                 dockerImage.push()
+        //             }
+        //         }
+        //     }
+        // }
         stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "CDUsingArgoCD"
@@ -106,7 +143,7 @@ pipeline {
             script {
                 // Clean the workspace after every build
                 echo "Cleaning up the workspace..."
-                cleanWs() // This will delete the entire workspace
+                cleanWs()
             }
         }
         success {
