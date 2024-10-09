@@ -16,6 +16,11 @@ pipeline {
         string(name: 'CICDSERVER_IP', defaultValue: '18.212.186.40', description: 'Enter the SonarQube server IP address')
     }
 
+    environment {
+        SONAR_URL = "http://${params.CICDSERVER_IP}:9000" // Define SonarQube URL here
+        DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}" // Docker image name with version
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -28,7 +33,7 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-         // SonarQube server pre installed
+        // SonarQube server pre-installed
         stage('SonarQube Initialization and Static Code Analysis') {
             steps {
                 script {
@@ -42,11 +47,6 @@ pipeline {
                         sleep 30 # Adjust the wait time as necessary
                     '''
                 }
-                
-                environment {
-                    SONAR_URL = "http://${params.CICDSERVER_IP}:9000" // Use the parameter here
-                }
-
                 withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
                     sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
                 }
@@ -54,16 +54,13 @@ pipeline {
         }
         // Build Docker Image
         stage('Build Docker Image') {
-            environment {
-                DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}"
-            }
             steps {
                 script {
                     sh 'docker build -t ${DOCKER_IMAGE} .'
                 }
             }
         }
-        // Trivy preinstalled - Scan for Docker Image
+        // Trivy pre-installed - Scan for Docker Image
         stage('Trivy Scan Docker Image') {
             steps {
                 sh 'trivy --version'
@@ -92,7 +89,8 @@ pipeline {
                 }
             }
         }
-        // Push Docker Image to Docker Hub using jenkins docker plugin credentials
+
+        // Commented: Push Docker Image to Docker Hub using Jenkins Docker plugin credentials
         // stage('Push Docker Image') {
         //     environment {
         //         DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}"
@@ -107,6 +105,7 @@ pipeline {
         //         }
         //     }
         // }
+
         stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "CDUsingArgoCD"
