@@ -1,11 +1,13 @@
 pipeline {
-    agent {
-        docker {
-            // image 'murali16394/jenkins-docker-sudo-agent:latest'
-            image 'abhishekf5/maven-abhishek-docker-agent:v1'
-            args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
-        }
-    }
+    // agent {
+    //     docker {
+    //         // image 'murali16394/jenkins-docker-sudo-agent:latest'
+    //         image 'abhishekf5/maven-abhishek-docker-agent:v1'
+    //         args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+    //     }
+    // }
+
+    agent any
     
     options {
         // Clean the workspace before every build
