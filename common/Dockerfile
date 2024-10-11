@@ -13,8 +13,17 @@ RUN useradd -m -s /bin/bash jenkins && \
     echo "jenkins:jenkins" | chpasswd && \
     usermod -aG sudo jenkins
 
+# Configure sudoers to allow jenkins to use sudo without password
+RUN echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Ensure PATH includes common binary locations
+ENV PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 # Change back to the jenkins user
 USER jenkins
 
-# Set the working directory (optional)
+# Set the working directory
 WORKDIR /home/jenkins
+
+# Verify sudo installation (optional, can be removed in production)
+RUN sudo --version
