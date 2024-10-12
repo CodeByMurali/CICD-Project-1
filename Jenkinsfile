@@ -17,7 +17,7 @@ pipeline {
     }
 
     environment {
-        SONAR_URL = "http://${params.CICDSERVER_IP}:9000" // Define SonarQube URL here
+        SONAR_URL = "http://murali.click:9000" // Define SonarQube URL here
         DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}" // Docker image name with version
     }
 
