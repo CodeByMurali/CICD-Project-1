@@ -83,8 +83,7 @@ pipeline {
                     }
                 }
             }
-        }
-
+        
         // Commented: Push Docker Image to Docker Hub using Jenkins Docker plugin credentials
         // stage('Push Docker Image') {
         //     environment {
