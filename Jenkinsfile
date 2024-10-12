@@ -78,8 +78,7 @@ pipeline {
                         echo "Docker hub login successful via vault"
                         // Define the Docker image and push it
                         def dockerImage = docker.image("${DOCKER_IMAGE}")
-                        docker.withRegistry('https://index.docker.io/v1/', 'docker-cred') {
-                            dockerImage.push()
+                        sh "docker push ${DOCKER_IMAGE}"
                         }
                     }
                 }
