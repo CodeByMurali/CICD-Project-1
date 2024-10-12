@@ -10,7 +10,9 @@ RUN apt-get update && \
     # Install Trivy using the provided command
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin && \
     # Verify Trivy installation
-    trivy --version
+    echo "Trivy version:" && trivy --version && \
+    echo "Trivy installation successful."
+RUN chmod +x /usr/local/bin/trivy
 
 # Set the PATH environment variable
 ENV PATH="/usr/local/bin:${PATH}"

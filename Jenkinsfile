@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'murali16394/jenkins-docker-custom-agent:latest'
+            image 'murali16394/jenkins-docker-custom-agent-1:latest'
             args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
         }
     }
