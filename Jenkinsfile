@@ -52,8 +52,8 @@ pipeline {
         // Trivy pre-installed - Scan for Docker Image
         stage('Trivy Scan Docker Image') {
             steps {
-                sh 'trivy --version'
-                sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}'
+                sh '/usr/local/bin/trivy --version'
+                sh '/usr/local/bin/trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}'
             }
             post {
                 failure {
