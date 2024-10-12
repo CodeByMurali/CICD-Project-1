@@ -36,17 +36,6 @@ pipeline {
         // SonarQube server pre-installed
         stage('SonarQube Initialization and Static Code Analysis') {
             steps {
-                script {
-                    // Restart SonarQube server
-                    echo "Restarting SonarQube server..."
-                    sh '''
-                        sudo su - sonarqube -c "cd sonarqube-9.9.7.96285/bin/linux-x86-64/ && ./sonar.sh stop"
-                        sleep 5
-                        sudo su - sonarqube -c "cd sonarqube-9.9.7.96285/bin/linux-x86-64/ && ./sonar.sh start"
-                        echo "Waiting for SonarQube to start..."
-                        sleep 30 # Adjust the wait time as necessary
-                    '''
-                }
                 withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
                     sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
                 }
