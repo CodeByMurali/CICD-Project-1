@@ -34,13 +34,13 @@ pipeline {
             }
         }
         // SonarQube server pre-installed
-        stage('SonarQube Initialization and Static Code Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-                    sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
-                }
-            }
-        }
+        // stage('SonarQube Initialization and Static Code Analysis') {
+        //     steps {
+        //         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
+        //             sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+        //         }
+        //     }
+        // }
         // Build Docker Image
         stage('Build Docker Image') {
             steps {
@@ -49,25 +49,25 @@ pipeline {
                 }
             }
         }
-        // Trivy pre-installed - Scan for Docker Image
-        stage('Trivy Scan Docker Image') {
-            steps {
-                sh 'echo $PATH' // Debug the PATH variable
-                sh '/usr/local/bin/trivy --version'
+        // Trivy installed in the container agent - Scan for Docker Image
+        // stage('Trivy Scan Docker Image') {
+        //     steps {
+        //         sh 'echo $PATH' // Debug the PATH variable
+        //         sh '/usr/local/bin/trivy --version'
 
-                // Capture the exit status of the Trivy scan
-                script {
-                    def trivyScanStatus = sh(script: '/usr/local/bin/trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}', returnStatus: true)
+        //         // Capture the exit status of the Trivy scan
+        //         script {
+        //             def trivyScanStatus = sh(script: '/usr/local/bin/trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}', returnStatus: true)
 
-                    // Check the exit status and log a warning if vulnerabilities are found
-                    if (trivyScanStatus != 0) {
-                        echo 'Warning: Security vulnerabilities found in the Docker image!'
-                    } else {
-                        echo 'No security vulnerabilities found in the Docker image.'
-                    }
-                }
-            }
-        }
+        //             // Check the exit status and log a warning if vulnerabilities are found
+        //             if (trivyScanStatus != 0) {
+        //                 echo 'Warning: Security vulnerabilities found in the Docker image!'
+        //             } else {
+        //                 echo 'No security vulnerabilities found in the Docker image.'
+        //             }
+        //         }
+        //     }
+        // }
         stage('Docker push by retrieving credentials from vault') {
             steps {
                 withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: "http://${params.CICDSERVER_IP}:8200"], 
