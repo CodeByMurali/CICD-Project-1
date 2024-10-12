@@ -12,10 +12,6 @@ pipeline {
         timestamps()
     }
     
-    parameters {
-        string(name: 'CICDSERVER_IP', defaultValue: '54.147.46.158', description: 'Enter the SonarQube server IP address')
-    }
-
     environment {
         SONAR_URL = "http://murali.click:9000" // Define SonarQube URL here
         DOCKER_IMAGE = "murali16394/my-spring-boot-app:${BUILD_NUMBER}" // Docker image name with version
@@ -69,7 +65,7 @@ pipeline {
         }
         stage('Docker push by retrieving credentials from vault') {
             steps {
-                withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: "http://${params.CICDSERVER_IP}:8200"], 
+                withVault(configuration: [timeout: 60, vaultCredentialId: 'vault-token', vaultUrl: "http://murali.click:8200"], 
                         vaultSecrets: [[path: 'secret/dockerhub', secretValues: [[vaultKey: 'username', envVar: 'DOCKER_USERNAME'], [vaultKey: 'password', envVar: 'DOCKER_PASSWORD']]]]) {
                     script {
                         // Log in to Docker
