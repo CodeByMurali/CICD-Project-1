@@ -13,7 +13,7 @@ pipeline {
     }
     
     parameters {
-        string(name: 'CICDSERVER_IP', defaultValue: '18.212.186.40', description: 'Enter the SonarQube server IP address')
+        string(name: 'CICDSERVER_IP', defaultValue: '54.147.46.158', description: 'Enter the SonarQube server IP address')
     }
 
     environment {
