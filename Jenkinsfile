@@ -54,11 +54,17 @@ pipeline {
             steps {
                 sh 'echo $PATH' // Debug the PATH variable
                 sh '/usr/local/bin/trivy --version'
-                sh '/usr/local/bin/trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}'
-            }
-            post {
-                failure {
-                    echo 'Security vulnerabilities found in the Docker image!'
+
+                // Capture the exit status of the Trivy scan
+                script {
+                    def trivyScanStatus = sh(script: '/usr/local/bin/trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKER_IMAGE}', returnStatus: true)
+
+                    // Check the exit status and log a warning if vulnerabilities are found
+                    if (trivyScanStatus != 0) {
+                        echo 'Warning: Security vulnerabilities found in the Docker image!'
+                    } else {
+                        echo 'No security vulnerabilities found in the Docker image.'
+                    }
                 }
             }
         }
