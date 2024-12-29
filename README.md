@@ -13,4 +13,5 @@ This project describes a Continuous Integration and Continuous Delivery pipeline
 
 Architecture diagram
 
-![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/72b7bdde-ec45-45f9-b665-ff9e01cd0612/5adb0ce4-925c-4f97-9851-470847821caf/image.png)
+![image](https://github.com/user-attachments/assets/c3d42aa9-ed26-4b00-b446-9c0cbead2cbf)
+
